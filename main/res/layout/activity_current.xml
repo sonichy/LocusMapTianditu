@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/RelativeLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+    <com.tianditu.android.maps.MapView  android:id="@+id/mapView"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"/>
+
+    <TextView
+        android:id="@+id/textView_currentLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5sp"
+        android:layout_marginTop="30sp"
+        android:text="Location"/>
+
+    <TextView
+        android:id="@+id/textView_upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_currentLocation"
+        android:layout_marginLeft="5sp"
+        android:text="Upload"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="20dp">
+
+        <RadioButton
+            android:id="@+id/radioButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="矢量"
+            android:textColor="#000000"/>
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="卫星"
+            android:textColor="#000000"/>
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="地形"
+            android:textColor="#000000"/>
+
+    </RadioGroup>
+
+    <ImageButton
+        android:id="@+id/imageButton_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="54dp"
+        android:layout_marginLeft="35dp"
+        android:background="#00000000"
+        android:src="@android:drawable/ic_menu_mylocation"/>
+
+</RelativeLayout>

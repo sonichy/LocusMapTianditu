@@ -1,0 +1,87 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.tianditu.android.maps.MapView  android:id="@+id/mapView"
+                                        android:layout_width="fill_parent"
+                                        android:layout_height="fill_parent"/>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="data"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:gravity="right"
+        android:text="路程：0.0米"
+        android:textColor="#000000" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView2"
+        android:layout_marginRight="10sp">
+
+        <RadioButton
+            android:id="@+id/HRB_VEC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="矢量"
+            android:textColor="#000000"/>
+
+        <RadioButton
+            android:id="@+id/HRB_IMG"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="卫星"
+            android:textColor="#000000"/>
+
+        <RadioButton
+            android:id="@+id/HRB_TERRAIN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="地形"
+            android:textColor="#000000"/>
+
+    </RadioGroup>
+
+    <ImageButton
+        android:id="@+id/imageButton_history_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50sp"
+        android:layout_marginLeft="20sp"
+        android:background="#00000000"
+        android:src="@android:drawable/ic_menu_mylocation"/>
+
+ 	<Button
+ 	    android:id="@+id/button_animate"
+ 	    android:layout_width="wrap_content"
+ 	    android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="60sp"
+ 	    android:text="动画" />
+
+    <Button
+        android:id="@+id/button_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button_animate"
+        android:layout_toRightOf="@+id/button_animate"
+        android:text="停止"/>
+ 	
+</RelativeLayout>
