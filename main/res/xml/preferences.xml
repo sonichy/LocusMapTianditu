@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" >
-	<PreferenceCategory android:title="设置">
+                  android:layout_width="match_parent">
+    <PreferenceCategory android:title="设置">
 
         <EditTextPreference
             android:key="uploadServer"
-            android:title="上传服务器地址"
-            android:defaultValue="http://sonichy.96.lt/locusmap/add.php"
-            android:summary="http://sonichy.96.lt/locusmap/add.php"/>
+            android:title="上传服务器地址"/>
 
     </PreferenceCategory>
 </PreferenceScreen>

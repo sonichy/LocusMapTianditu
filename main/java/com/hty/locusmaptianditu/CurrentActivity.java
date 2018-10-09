@@ -24,9 +24,11 @@ import com.tianditu.android.maps.renderoption.LineOption;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class CurrentActivity extends Activity {
@@ -37,17 +39,18 @@ public class CurrentActivity extends Activity {
     MyLocationOverlay mMyLocation;
     GeoPoint GP0;
     boolean isFirst = true;
-    Date starttime, datel;
-    SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    SimpleDateFormat dateformat1 = new SimpleDateFormat("yyyyMMddHHmmss");
-    SimpleDateFormat dateformat2 = new SimpleDateFormat("yyyy-MM-dd");
-    SimpleDateFormat timeformat = new SimpleDateFormat("HH:mm:ss");
-    SimpleDateFormat timeformatDuration = new SimpleDateFormat("HH:mm:ss");
-    String filename;
-    double lgt, ltt, lgt0, ltt0, lc=0, distance, speed;
-    int c=0;
+    Date time_start, datel;
+    SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    SimpleDateFormat dateformat1 = new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault());
+    SimpleDateFormat dateformat2 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    SimpleDateFormat timeformat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+    SimpleDateFormat timeformatDuration = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+    double lgt, ltt, lgt0, ltt0, lc = 0, distance, speed;
+    int c = 0;
     SharedPreferences sharedPreferences;
-    String uploadServer="", RC;
+    String uploadServer = "", RC = "", filename = "";
+    DecimalFormat DF1 = new DecimalFormat("0.0");
+    DecimalFormat DF2 = new DecimalFormat("0.00");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +58,16 @@ public class CurrentActivity extends Activity {
         setContentView(R.layout.activity_current);
         MainApplication.getInstance().addActivity(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        uploadServer = sharedPreferences.getString("uploadServer","");
-        starttime = new Date();
-        filename = dateformat1.format(starttime) + ".gpx";
-        MainApplication.setrfn(dateformat1.format(starttime) + ".gpx");
-        RWXML.create(dateformat1.format(starttime));
+        uploadServer = sharedPreferences.getString("uploadServer", MainApplication.uploadServer);
+        if (uploadServer.equals(""))
+            uploadServer = MainApplication.uploadServer;
+        time_start = new Date();
+        filename = dateformat1.format(time_start) + "TD.gpx";
+        MainApplication.setrfn(filename);
+        RWXML.create(dateformat1.format(time_start));
         timeformatDuration.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         textView_currentLocation = (TextView) findViewById(R.id.textView_currentLocation);
-        textView_upload  = (TextView) findViewById(R.id.textView_upload);
+        textView_upload = (TextView) findViewById(R.id.textView_upload);
         imageButton_location = (ImageButton) findViewById(R.id.imageButton_location);
         imageButton_location.setOnClickListener(new ClickListener());
 
@@ -92,9 +97,9 @@ public class CurrentActivity extends Activity {
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.radioButton1){
+                if (checkedId == R.id.radioButton1) {
                     mMapView.setMapType(MapView.TMapType.MAP_TYPE_VEC);
-                } else if (checkedId == R.id.radioButton2){
+                } else if (checkedId == R.id.radioButton2) {
                     mMapView.setMapType(MapView.TMapType.MAP_TYPE_IMG);
                 } else if (checkedId == R.id.radioButton3) {
                     mMapView.setMapType(MapView.TMapType.MAP_TYPE_TERRAIN);
@@ -137,14 +142,14 @@ public class CurrentActivity extends Activity {
                 String slgt = String.valueOf(lgt);
                 String sltt = String.valueOf(ltt);
                 Date date = new Date();
-                long duration = date.getTime() - starttime.getTime();
+                long duration = date.getTime() - time_start.getTime();
                 String sduration = timeformatDuration.format(duration);
                 textView_currentLocation.setText(filename);
                 textView_currentLocation.append("\n" + dateformat.format(datel));
                 textView_currentLocation.append("\n经度：" + slgt);
                 textView_currentLocation.append("\n纬度：" + sltt);
-                textView_currentLocation.append("\n海拔：" + String.valueOf(location.getAltitude()) + "米");
-                textView_currentLocation.append("\n速度：" + String.valueOf(speed) + "米/秒");
+                textView_currentLocation.append("\n海拔：" + location.getAltitude() + " 米");
+                textView_currentLocation.append("\n速度：" + DF1.format(speed) + " 米/秒");
                 textView_currentLocation.append("\n时长：" + sduration);
                 ArrayList<GeoPoint> points = new ArrayList<GeoPoint>();
                 GeoPoint GP = new GeoPoint((int) (location.getLatitude() * 1E6), (int) (location.getLongitude() * 1E6));
@@ -164,21 +169,25 @@ public class CurrentActivity extends Activity {
                 ployline.setOption(LOption);
                 ployline.setPoints(points);
                 mMapView.addOverlay(ployline);
-                distance = Utils.getDistance(lgt, ltt, lgt0, ltt0);
+                //distance = Utils.getDistance(lgt, ltt, lgt0, ltt0);
+                //distance = com.tianditu.maps.Map.Project.getDistanceMeters(lgt, ltt, lgt0, ltt0);
+                float[] results = new float[1];
+                Location.distanceBetween(ltt, lgt, ltt0, lgt0, results);
+                distance = results[0];
+                mMapView.getProjection();
                 lc += distance;
-                textView_currentLocation.append("\n位移：" + String.valueOf(distance) + "米");
-                String slc = String.valueOf(lc);
-                textView_currentLocation.append("\n路程：" + slc + "米");
-                RWXML.add(dateformat1.format(starttime) + ".gpx", dateformat.format(date), sltt, slgt, slc, sduration);
-                if(c>10){
+                textView_currentLocation.append("\n位移：" + DF2.format(distance) + "米");
+                textView_currentLocation.append("\n路程：" + DF2.format(lc) + "米");
+                RWXML.add(filename, dateformat.format(date), String.valueOf(ltt), String.valueOf(lgt), DF2.format(lc), sduration);
+                if (c > 10) {
                     new Thread(t).start();
-                    c=0;
+                    c = 0;
                 }
                 c++;
                 GP0 = GP;
                 lgt0 = lgt;
                 ltt0 = ltt;
-            }else{
+            } else {
                 textView_currentLocation.append("无法定位");
             }
         }
@@ -237,9 +246,10 @@ public class CurrentActivity extends Activity {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            final String SU = uploadServer + "?date=" + dateu + "&time=" + timeu + "&longitude=" + lgt + "&latitude=" + ltt + "&speed=" + speed + "&distance=" + distance;
+            final String SU = uploadServer + "/add.php?date=" + dateu + "&time=" + timeu + "&longitude=" + lgt + "&latitude=" + ltt + "&speed=" + DF1.format(speed) + "&distance=" + DF2.format(distance);
+            RWXML.append("TDMap.log", SU);
             RC = Utils.sendURLResponse(SU);
-            runOnUiThread(new Runnable(){
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     textView_upload.setText(RC);

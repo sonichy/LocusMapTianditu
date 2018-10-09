@@ -1,8 +1,6 @@
 package com.hty.locusmaptianditu;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,22 +26,15 @@ import com.tianditu.android.maps.overlay.MarkerOverlay;
 import com.tianditu.android.maps.overlay.PolylineOverlay;
 import com.tianditu.android.maps.renderoption.LineOption;
 
-
 public class HistoryActivity extends Activity {
     MapView mMapView;
     MapController mMapController;
     MarkerOverlay mMarker;
-    TextView tv1, tv2;
-    //GeoPoint p1, p2;
-    double lc = 0, lc0 = 0, speed, speedmax = 0, pi = 3.14, ltt, lgt, ltt1, lgt1, distance, lc1 = 0, distance1, speed1, speedmax1 = 0, atan;
-    Date date, starttime;
-    long duration;
-    SimpleDateFormat timeformat = new SimpleDateFormat("HH:mm:ss");
-    SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss");
+    TextView textView1;
     ArrayList<GeoPoint> points = new ArrayList<GeoPoint>();
     ImageButton imageButton_history_location;
     Button button_animate, button_stop;
-    int num,c;
+    int num, c;
     boolean flag = true;
     RadioGroup mRadioGroup;
 
@@ -52,8 +43,7 @@ public class HistoryActivity extends Activity {
         super.onCreate(savedInstanceState);
         MainApplication.getInstance().addActivity(this);
         setContentView(R.layout.activity_history);
-        tv1 = (TextView) findViewById(R.id.textView1);
-        tv2 = (TextView) findViewById(R.id.textView2);
+        textView1 = (TextView) findViewById(R.id.textView1);
         imageButton_history_location = (ImageButton) findViewById(R.id.imageButton_history_location);
         imageButton_history_location.setOnClickListener(new clickListener());
         button_animate = (Button) findViewById(R.id.button_animate);
@@ -79,9 +69,9 @@ public class HistoryActivity extends Activity {
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.HRB_VEC){
+                if (checkedId == R.id.HRB_VEC) {
                     mMapView.setMapType(MapView.TMapType.MAP_TYPE_VEC);
-                } else if (checkedId == R.id.HRB_IMG){
+                } else if (checkedId == R.id.HRB_IMG) {
                     mMapView.setMapType(MapView.TMapType.MAP_TYPE_IMG);
                 } else if (checkedId == R.id.HRB_TERRAIN) {
                     mMapView.setMapType(MapView.TMapType.MAP_TYPE_TERRAIN);
@@ -98,7 +88,7 @@ public class HistoryActivity extends Activity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.imageButton_history_location:
-                    mMapController.setCenter(points.get(num/2));
+                    mMapController.setCenter(points.get(num / 2));
                     break;
                 case R.id.button_animate:
                     flag = false;
@@ -126,7 +116,6 @@ public class HistoryActivity extends Activity {
             points = RWXML.read(MainApplication.getfn());
             Drawgpx();
         } else {
-            //sendBroadcast(new Intent("finishGPXList"));
             startActivity(new Intent(HistoryActivity.this, GPXListActivity.class));
         }
     }
@@ -149,24 +138,22 @@ public class HistoryActivity extends Activity {
         int item_id = item.getItemId();
         switch (item_id) {
             case 0:
-                new AlertDialog.Builder(HistoryActivity.this).setIcon(android.R.drawable.stat_sys_warning).setTitle("删除操作")
-                        .setMessage("此步骤不可还原，确定删除\n" + MainApplication.getfn() + " ？")
-                        .setPositiveButton("是", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String ttext = null;
-                                Log.e("MApplication.getfn()", MainApplication.getfn());
-                                Log.e("MApplication.getrfn()", MainApplication.getrfn());
-                                if (!MainApplication.getfn().equals(MainApplication.getrfn())) {
-                                    ttext = MainApplication.getfn() + "已删除！";
-                                    RWXML.del(MainApplication.getfn());
-                                    startActivity(new Intent(HistoryActivity.this, GPXListActivity.class));
-                                } else {
-                                    ttext = "此文件正在记录中，请先退出新行程！";
-                                }
-                                Toast.makeText(getApplicationContext(), ttext, Toast.LENGTH_SHORT).show();
-                            }
-                        }).setNegativeButton("否", new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(HistoryActivity.this).setIcon(android.R.drawable.stat_sys_warning).setTitle("删除操作").setMessage("此步骤不可还原，确定删除\n" + MainApplication.getfn() + " ？").setPositiveButton("是", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String ttext = null;
+                        Log.e("MApplication.getfn()", MainApplication.getfn());
+                        Log.e("MApplication.getrfn()", MainApplication.getrfn());
+                        if (!MainApplication.getfn().equals(MainApplication.getrfn())) {
+                            ttext = MainApplication.getfn() + " 已删除！";
+                            RWXML.del(MainApplication.getfn());
+                            startActivity(new Intent(HistoryActivity.this, GPXListActivity.class));
+                        } else {
+                            ttext = "此文件正在记录中，请先退出新行程！";
+                        }
+                        Toast.makeText(getApplicationContext(), ttext, Toast.LENGTH_SHORT).show();
+                    }
+                }).setNegativeButton("否", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                     }
@@ -192,9 +179,8 @@ public class HistoryActivity extends Activity {
     void Drawgpx() {
         mMapView.removeAllOverlay();
         num = points.size();
-        tv1.setText(MainApplication.getmsg());
-        tv2.setText(num + "个点");
-        mMapController.setCenter(points.get(num/2));
+        textView1.setText(MainApplication.getmsg());
+        mMapController.setCenter(points.get(num / 2));
         mMapController.setZoom(12);
 
         if (num == 1) {
@@ -208,7 +194,7 @@ public class HistoryActivity extends Activity {
         mMapView.addOverlay(mMarker);
 
         mMarker = new MarkerOverlay();
-        mMarker.setPosition(points.get(num-1));
+        mMarker.setPosition(points.get(num - 1));
         mMarker.setIcon(getResources().getDrawable(R.drawable.end));
         mMarker.setTitle("终点");
         mMapView.addOverlay(mMarker);
@@ -246,4 +232,5 @@ public class HistoryActivity extends Activity {
             }
         }
     }
+
 }

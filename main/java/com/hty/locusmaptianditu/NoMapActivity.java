@@ -33,43 +33,46 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class NoMapActivity extends Activity {
-	boolean isFirstLoc = true;
-	TextView textView_location, textView_timer, textView_gpsStatus, textView_upload;
-	double lc=0, lc0=0, speed=0, speedmax=0, pi=3.14, ltt, lgt, alt, ltt1, lgt1, distance, distancesend=0, lc1=0, distance1, speed1, speedmax1=0;
-	float direction;
-	Date date, starttime, datel;
-	long duration;
-	SimpleDateFormat timeformat = new SimpleDateFormat("HH:mm:ss");
-	SimpleDateFormat timeformatd = new SimpleDateFormat("HH:mm:ss");
-	SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	SimpleDateFormat dateformat1 = new SimpleDateFormat("yyyyMMddHHmmss");
-	SimpleDateFormat dateformat2 = new SimpleDateFormat("yyyy-MM-dd");
-	String fp, fn, RC, sduration;
-	int ER, d = 0, lci, c=0;
+    boolean isFirstLoc = true;
+    TextView textView_location, textView_timer, textView_gpsStatus, textView_upload;
+    double lc = 0, lc0 = 0, speed = 0, speedmax = 0, pi = 3.14, ltt, lgt, alt, ltt1, lgt1, distance, distancesend = 0, lc1 = 0, distance1, speed1, speedmax1 = 0;
+    float direction;
+    Date date, time_start, datel;
+    long duration;
+    SimpleDateFormat timeformat = new SimpleDateFormat("HH:mm:ss");
+    SimpleDateFormat timeformatd = new SimpleDateFormat("HH:mm:ss");
+    SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat dateformat1 = new SimpleDateFormat("yyyyMMddHHmmss");
+    SimpleDateFormat dateformat2 = new SimpleDateFormat("yyyy-MM-dd");
+    String fp, fn, RC, sduration;
+    int ER, d = 0, lci, c = 0;
     private LocationManager LM;
     SharedPreferences sharedPreferences;
-    String uploadServer;
+    String uploadServer = "", filename = "";
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nomap);
-		MainApplication.getInstance().addActivity(this);
+        MainApplication.getInstance().addActivity(this);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        uploadServer = sharedPreferences.getString("uploadServer","");
-		timeformat.setTimeZone(TimeZone.getDefault());
-		timeformatd.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        uploadServer = sharedPreferences.getString("uploadServer", MainApplication.uploadServer);
+        if (uploadServer.equals(""))
+            uploadServer = MainApplication.uploadServer;
+        timeformat.setTimeZone(TimeZone.getDefault());
+        timeformatd.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         textView_location = (TextView) findViewById(R.id.textView_location);
         textView_gpsStatus = (TextView) findViewById(R.id.textView_gpsStatus);
-        textView_upload  = (TextView) findViewById(R.id.textView_upload);
+        textView_upload = (TextView) findViewById(R.id.textView_upload);
         textView_timer = (TextView) findViewById(R.id.textView2);
-		starttime = new Date();
-		MainApplication.setrfn(dateformat1.format(starttime) + ".gpx");
-		RWXML.create(dateformat1.format(starttime));
+        time_start = new Date();
+        filename = dateformat1.format(time_start) + "TD.gpx";
+        MainApplication.setrfn(filename);
+        RWXML.create(dateformat1.format(time_start));
 
         LM = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!LM.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(this, "请开启GPS导航", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "请开启GPS", Toast.LENGTH_SHORT).show();
             // 打开GPS设置界面
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivityForResult(intent, 0);
@@ -184,11 +187,11 @@ public class NoMapActivity extends Activity {
             textView_location.append("\n" + location.toString());
             if (isFirstLoc) {
                 isFirstLoc = false;
-            }else{
-                distance = Utils.getDistance(lgt,ltt,lgt1,ltt1);
+            } else {
+                distance = Utils.getDistance(lgt, ltt, lgt1, ltt1);
                 lc += distance;
                 date = new Date();
-                duration = date.getTime() - starttime.getTime();
+                duration = date.getTime() - time_start.getTime();
                 sduration = timeformatd.format(duration);
                 textView_timer.setText(sduration);
                 textView_location.append("\n位移：" + String.valueOf(distance) + "米");
@@ -197,10 +200,10 @@ public class NoMapActivity extends Activity {
             ltt1 = ltt;
             String slc = String.valueOf(lc);
             textView_location.append("\n路程：" + slc + "米");
-            RWXML.add(dateformat1.format(starttime) + ".gpx", dateformat.format(datel), sltt, slgt, slc, sduration);
-            if(c>10){
+            RWXML.add(dateformat1.format(time_start) + ".gpx", dateformat.format(datel), sltt, slgt, slc, sduration);
+            if (c > 10) {
                 new Thread(t).start();
-                c=0;
+                c = 0;
             }
             c++;
         } else {
@@ -221,96 +224,97 @@ public class NoMapActivity extends Activity {
 
 
     @Override
-	protected void onDestroy() {
-		super.onDestroy();
+    protected void onDestroy() {
+        super.onDestroy();
         LM.removeUpdates(locationListener);
-	}
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-	}
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, 0, 0, "退出");
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 0, 0, "退出");
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		int item_id = item.getItemId();
-		switch (item_id) {
-		case 0:
-			MainApplication.setrfn("");
-			finish();
-			break;
-		}
-		return true;
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int item_id = item.getItemId();
+        switch (item_id) {
+            case 0:
+                MainApplication.setrfn("");
+                finish();
+                break;
+        }
+        return true;
+    }
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			startActivity(new Intent(NoMapActivity.this, MenuActivity.class));
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
-	}
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            startActivity(new Intent(NoMapActivity.this, MenuActivity.class));
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
-	private String m(int i) {
-		return i < 10 ? "0" + i : "" + i;
-	}
+    private String m(int i) {
+        return i < 10 ? "0" + i : "" + i;
+    }
 
-	public static final boolean isGPSOpen(final Context context) {
-		LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-		boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-		if (gps) {
-			return true;
-		}
-		return false;
-	}
+    public static final boolean isGPSOpen(final Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (gps) {
+            return true;
+        }
+        return false;
+    }
 
-	public static final void openGPS(Context context) {
-		if (!isGPSOpen(context)) {
-			Intent GPSIntent = new Intent();
-			GPSIntent.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-			GPSIntent.addCategory("android.intent.category.ALTERNATIVE");
-			GPSIntent.setData(Uri.parse("custom:3"));
-			try {
-				PendingIntent.getBroadcast(context, 0, GPSIntent, 0).send();
-			} catch (CanceledException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    public static final void openGPS(Context context) {
+        if (!isGPSOpen(context)) {
+            Intent GPSIntent = new Intent();
+            GPSIntent.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+            GPSIntent.addCategory("android.intent.category.ALTERNATIVE");
+            GPSIntent.setData(Uri.parse("custom:3"));
+            try {
+                PendingIntent.getBroadcast(context, 0, GPSIntent, 0).send();
+            } catch (CanceledException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	Thread t = new Thread(new Runnable() {
-		@Override
-		public void run() {
-			String dateu = "";
-			String timeu = "";
-			try {
-				dateu = URLEncoder.encode(dateformat2.format(datel), "utf-8");
-				timeu = URLEncoder.encode(timeformat.format(datel), "utf-8");
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
-			final String SU = uploadServer + "?date=" + dateu + "&time=" + timeu + "&longitude=" + lgt + "&latitude=" + ltt + "&speed=" + speed + "&distance=" + distance;
-			RC = Utils.sendURLResponse(SU);
-            runOnUiThread(new Runnable(){
+    Thread t = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            String dateu = "";
+            String timeu = "";
+            try {
+                dateu = URLEncoder.encode(dateformat2.format(datel), "utf-8");
+                timeu = URLEncoder.encode(timeformat.format(datel), "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            final String SU = uploadServer + "?date=" + dateu + "&time=" + timeu + "&longitude=" + lgt + "&latitude=" + ltt + "&speed=" + speed + "&distance=" + distance;
+            RWXML.append("TDMap.log", SU);
+            RC = Utils.sendURLResponse(SU);
+            runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     textView_upload.setText(SU + "\nResponseCode: " + RC);
                 }
             });
-			//distancesend = 0;
-		}
-	});
+            //distancesend = 0;
+        }
+    });
 
 }

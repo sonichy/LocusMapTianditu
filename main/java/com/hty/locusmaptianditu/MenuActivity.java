@@ -54,8 +54,10 @@ public class MenuActivity extends Activity {
                 case R.id.button_server:
                     Intent intent = new Intent();
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MenuActivity.this);
-                    String uploadServer = sharedPreferences.getString("uploadServer","");
-                    intent.setData(Uri.parse(uploadServer.substring(0,uploadServer.lastIndexOf("/"))));
+                    String uploadServer = sharedPreferences.getString("uploadServer", MainApplication.uploadServer);
+                    if (uploadServer.equals(""))
+                        uploadServer = MainApplication.uploadServer;
+                    intent.setData(Uri.parse(uploadServer));
                     intent.setAction(Intent.ACTION_VIEW);
                     MenuActivity.this.startActivity(intent);
                     break;
@@ -63,11 +65,7 @@ public class MenuActivity extends Activity {
                     startActivity(new Intent(MenuActivity.this, SettingActivity.class));
                     break;
                 case R.id.button_about:
-                    new AlertDialog.Builder(MenuActivity.this)
-                            .setIcon(R.mipmap.ic_launcher)
-                            .setTitle("轨迹地图天地图版  V1.0")
-                            .setMessage("利用天地图API提供的地图、定位、绘图和手机的GPS功能绘制、记录位移轨迹，查看记录的轨迹，上传GPS数据到服务器。\n作者：黄颖\nE-mail：sonichy@163.com\nQQ：84429027\n\n更新历史\n1.0 (2018-07)\n百度地图API向天地图API迁移。\n增加上传服务器设置。")
-                            .setPositiveButton("确定", null).show();
+                    new AlertDialog.Builder(MenuActivity.this).setIcon(R.mipmap.ic_launcher).setTitle("轨迹地图天地图版  V1.0").setMessage("利用天地图API提供的地图、定位、绘图和手机的GPS功能绘制、记录位移轨迹，查看记录的轨迹，上传GPS数据到服务器。\n作者：黄颖\nE-mail：sonichy@163.com\nQQ：84429027\n\n更新历史\n1.0 (2018-07)\n百度地图API向天地图API迁移。\n增加上传服务器设置。").setPositiveButton("确定", null).show();
                     break;
                 case R.id.button_quit:
                     MainApplication.getInstance().exit();

@@ -113,10 +113,10 @@ public class GPXListActivity extends ListActivity {
         lv.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                String file = lv.getItemAtPosition(arg2).toString().toLowerCase();
+                String file = lv.getItemAtPosition(arg2).toString();
                 Log.e("file", file);
                 Log.e("MApplication.getrfn()", MainApplication.getrfn());
-                if (file.endsWith(".gpx")) {
+                if (file.toLowerCase().endsWith(".gpx")) {
                     if (RWXML.read(file) != null) {
                         MainApplication.setfn(file);
                         Intent intent = new Intent(GPXListActivity.this, HistoryActivity.class);

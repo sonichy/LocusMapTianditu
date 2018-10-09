@@ -62,8 +62,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="54dp"
-        android:layout_marginLeft="35dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="40dp"
         android:background="#00000000"
         android:src="@android:drawable/ic_menu_mylocation"/>
 

@@ -15,16 +15,6 @@
         android:text="data"
         android:textColor="#000000" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:gravity="right"
-        android:text="路程：0.0米"
-        android:textColor="#000000" />
-
     <RadioGroup
         android:id="@+id/radioGroup_history"
         android:layout_width="wrap_content"
